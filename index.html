@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!--
+  #############################
+  # gmod basic loading screen #
+  #  by dylmye |  v0.2-beta   #
+  #  just javascipt and html  #
+  #############################
+  -->
+  <style>
+  * {
+  box-sizing: border-box;
+}
+  body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+  }
+  #background {
+    top: 0;
+    width: 100%;
+    height: 1000px;
+    margin: 0;
+    background-image: url("background.jpg");
+    background-size: cover;
+    background-position: 25%;
+    /* Blur applied after load */
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+    position: fixed;
+    z-index: 1;
+  }
+  #body {
+    height: 100%;
+    margin: 0;
+  }
+  #dialog {
+    position: fixed;
+    z-index: 100;
+    margin-top: 10%;
+    margin-left: 25%;
+    margin-right: auto;
+    width: 50%;
+    background-color: #363636;
+    border-radius: 2px;
+    box-shadow: 0px 0px 7px 0px rgba(54,54,54,0.6);
+  }
+  /* ================================
+    Profile
+  */
+  #profile {
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 0.5em;
+    width: 200px;
+    background-image: url("logo.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  #profile > p {
+    color: rgba(255,255,255,1);
+    font-size: large;
+    text-align: center;
+    font-family: San Francisco Display, Helvetica Neue, Roboto Light, Arial, sans-serif;
+    margin-top: 0.5em;
+    margin-bottom: 0;
+  }
+  #profile > img {
+    border-radius: 1000px;
+    height: 100px;
+    width: 100px;
+    margin-left: 25%;
+    margin-right: auto;
+    margin-top: 24%;
+  }
+  /* ================================
+    Welcome
+  */
+  #welcome > h1 {
+    color: rgba(255,255,255,1);
+    font-family: Helvetica Neue, Roboto Light, Arial, sans-serif;
+    text-align: center;
+    font-size: 170%;
+    font-weight: normal;
+    margin-top: 0;
+  }
+  </style>
+</head>
+<body>
+  <script>
+  var AuthKey = "YOURAPIKEYHERE";
+  var ServerName = "YOURSERVERNAMEHERE";
+  var ProjectDir = "http://localhost/garryload/";
+  var DaTy = "xml";
+  </script>
+  <section id="body"> <!-- Hold-all -->
+    <section id="dialog"><!-- dialog -->
+      <div id="profile"><!-- profile picture holder + hitext -->
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Profile Picture" title="Profile Picture" id="pp"></img>
+        <p>Hi, <span id="uname">Loading Name</span><br><small id="rname">RealName</small></p>
+      </div><!-- /profile picture holder + hitext -->
+      <div id="welcome">
+        <h1>Title</h1>
+      </div>
+    </section> <!-- /dialog -->
+    <div id="background"></div>
+
+  </section><!-- /hold-all -->
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script>
+  $(function(){ // on load of DOM
+    setTimeout(function() { // well, after 2 seconds
+      /*
+      funct GetQSParams
+      Released under Public Domain
+      v1.0.1
+
+      Parses all query strings into an array
+      */
+      function GetQSParams(sParam) {
+        var sURLVariables = window.location.search.substring(1).split('&');
+        for (var i = 0; i < sURLVariables.length; i++)
+        {
+          var sParameterName = sURLVariables[i].split('=');
+          if (sParameterName[0] == sParam)
+          {
+            return sParameterName[1];
+          }
+        }
+      }
+
+      // AJAX function to pull from the small PHP code.
+      // If your host doesn't allow PHP hosting I highly
+      // reccomend "NearlyFreeSpeech" or for free, "100WebSpace".
+      $.ajax({
+        type: "GET",
+        url: "getsteamid.php?key=" + AuthKey + "&id=" + GetQSParams("steamid") + "&type=" + DaTy,
+        dataType: "xml",
+        success: function(xml) {
+          $(xml).find('player').each(function(){
+            var avatar = $(this).find('avatarfull').text();
+            var username = $(this).find('personaname').text();
+            var realname = $(this).find('realname').text();
+            $("#pp").attr("src", avatar);
+            $("#uname").html(username);
+            $("#rname").html(realname);
+          });
+        }
+      });
+
+    }, 2000); // endof setTimeout
+  }); // endof DOM load
+  </script>
+</body>
+</html>
